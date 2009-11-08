@@ -1,0 +1,22 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Hooks invoked when the module is being installed or uninstalled.
+ */
+
+/**
+ * Implement hook_uninstall().
+ */
+function uc_termsofservice_uninstall() {
+  $variables = array(
+    'uc_termsofservice_target',
+    'uc_termsofservice_required',
+    'uc_termsofservice_node',
+    'uc_termsofservice_popup',
+  );
+  foreach ($variables as $variable) {
+    variable_del($variable);
+  }
+}

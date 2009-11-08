@@ -22,7 +22,7 @@ You can disable the popup option in the settings of the module.
 You can theme both form and ToS text from two tpl files included with this 
 module and a css file, just copy those tpl files in your theme and modify the 
 text, structure or css.
-By default, the node body 
+By default, the node body will be displayed.
 
 -- Know Issues --
 The ToS can be placed as a cart pane, but then it won't be required. 

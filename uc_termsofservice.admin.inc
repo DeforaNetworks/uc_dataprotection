@@ -20,14 +20,14 @@ function uc_termsofservice_admin_settings() {
       UC_TERMSOFSERVICE_CART => t('cart'),
       UC_TERMSOFSERVICE_CHECKOUT => t('checkout'),
     ),
-    '#default_value' => variable_get('tos_target', 0),
+    '#default_value' => variable_get('uc_termsofservice_target', 0),
     '#weight' => -3,
   );
 
   $form['tos_required'] = array(
     '#type' => 'checkbox',
     '#title' => t('ToS agreement is required (Only for checkout)'),
-    '#default_value' => variable_get('tos_required', 0),
+    '#default_value' => variable_get('uc_termsofservice_required', 0),
     '#weight' => -2,
   );
 
@@ -35,7 +35,7 @@ function uc_termsofservice_admin_settings() {
     '#type' => 'textfield',
     '#title' => t('Select the node that corresponds to the Terms of Service'),
     '#autocomplete_path' => 'uc_termsofservice/node/autocomplete',
-    '#default_value' => variable_get('tos_node', NULL),
+    '#default_value' => variable_get('uc_termsofservice_node', NULL),
     '#weight' => 0,
   );
 
@@ -43,7 +43,7 @@ function uc_termsofservice_admin_settings() {
     $form['tos_popup'] = array(
       '#type' => 'checkbox',
       '#title' => t('Open ToS in a popup modal window.'),
-      '#default_value' => variable_get('tos_popup', 0),
+      '#default_value' => variable_get('uc_termsofservice_popup', 0),
       '#weight' => -1,
     );
 

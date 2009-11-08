@@ -76,7 +76,7 @@ function uc_termsofservice_theme() {
  */
 function uc_termsofservice_cart_pane($items) {
   $status = FALSE;
-  if (variable_get('tos_target', 0) == UC_TERMSOFSERVICE_CART) {
+  if (variable_get('uc_termsofservice_target', 0) == UC_TERMSOFSERVICE_CART) {
     $status = TRUE;
   }
   $panes[] = array(
@@ -95,7 +95,7 @@ function uc_termsofservice_cart_pane($items) {
  */
 function uc_termsofservice_checkout_pane() {
   $status = FALSE;
-  if (variable_get('tos_target', 0) == UC_TERMSOFSERVICE_CHECKOUT) {
+  if (variable_get('uc_termsofservice_target', 0) == UC_TERMSOFSERVICE_CHECKOUT) {
     $status = TRUE;
   }
   $panes[] = array(
@@ -114,7 +114,7 @@ function uc_termsofservice_checkout_pane() {
  * Callback form for cart pane.
  */
 function uc_termsofservice_agreement_cart_callback($items) {
-  if (module_exists('modalframe') && variable_get('tos_popup', 0)) {
+  if (module_exists('modalframe') && variable_get('uc_termsofservice_popup', 0)) {
     // If the modalframe module is enabled and the config for popups is
      // then the ToS is shown in a popup
     modalframe_parent_js();
@@ -146,7 +146,7 @@ function uc_termsofservice_general_form() {
   );
   $form['#theme'] = 'uc_termsofservice_agreement_form';
 
-  if (module_exists('modalframe') && variable_get('tos_popup', 0)) {
+  if (module_exists('modalframe') && variable_get('uc_termsofservice_popup', 0)) {
     // Send the Modal Frame javascript for child windows to the page.
     modalframe_child_js();
     $form['submit'] = array(
@@ -168,7 +168,7 @@ function uc_termsofservice_general_form_submit($form, &$form_state) {
 function uc_termsofservice_checkout_pane_callback($op) {
   switch ($op) {
     case 'view':
-      if (module_exists('modalframe') && variable_get('tos_popup', 0)) {
+      if (module_exists('modalframe') && variable_get('uc_termsofservice_popup', 0)) {
         // If the modalframe module is enabled and the config for popups is
          // then the ToS is shown in a popup
         modalframe_parent_js();
@@ -188,7 +188,7 @@ function uc_termsofservice_checkout_pane_callback($op) {
  * Function that filters the node nid from the autocomplete string.
  */
 function uc_termsofservice_get_nid_from_variable() {
-  $tos_node = variable_get('tos_node', 0);
+  $tos_node = variable_get('uc_termsofservice_node', 0);
   $preg_matches = array();
   $match = preg_match('/\[nid: (\d+)\]/', $tos_node, $preg_matches);
   if ($match) {
@@ -223,7 +223,7 @@ function uc_termsofservice_get_node($nid = NULL) {
  */
 function uc_termsofservice_get_item($title, $path, $size = NULL) {
   $options = array('attributes' => array('class' => 'uc_termsofservice-child'. (!empty($size) ? ' uc_termsofservice-size['. $size .']' : '')));
-  $required = variable_get('tos_required', 0);
+  $required = variable_get('uc_termsofservice_required', 0);
   $form['tos_agree_popup'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Terms of Service'),
