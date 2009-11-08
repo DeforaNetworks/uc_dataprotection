@@ -3,10 +3,9 @@ drupal_add_css(drupal_get_path('module', 'uc_termsofservice').'/uc_termsofservic
 ?>
 
 <div class="tos-text">
-  <span>
-    <?php print drupal_render($form['tos_text']); ?>
-  </span>
+  <?php print drupal_render($form['tos_text']); ?>
 </div>
+
 <div class ="tos-agree">
   <?php print drupal_render($form['tos_agree']); ?>
 </div>

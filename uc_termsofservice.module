@@ -1,10 +1,14 @@
 <?php
-// $Id:
+// $Id$
 
 /**
- *
+ * Ubercart Terms of Service.
+ * @author: pcambra.
  */
 
+/**
+ * Constants for admin settings page.
+ */
 define('UC_TERMSOFSERVICE_CART', 1);
 define('UC_TERMSOFSERVICE_CHECKOUT', 2);
 
@@ -31,6 +35,19 @@ function uc_termsofservice_menu() {
     'type'              => MENU_CALLBACK,
   );
 
+  /**
+   * modalframe callback items
+   */
+  if (module_exists('modalframe')) {
+    $items['uc_termsofservice/show'] = array(
+      'title'             => 'Show Terms of Service',
+      'page callback'     => 'drupal_get_form',
+      'page arguments'    => array('uc_termsofservice_general_form'),
+      'access callback'   => TRUE,
+      'type'              => MENU_CALLBACK,
+    );
+  }
+
   return $items;
 }
 
@@ -42,6 +59,10 @@ function uc_termsofservice_theme() {
     'uc_termsofservice_agreement_form' => array(
       'arguments' => array('form' => NULL),
       'template' => 'uc_termsofservice_agreement_form',
+    ),
+    'uc_termsofservice_agreement_node' => array(
+      'arguments' => array('node' => NULL),
+      'template' => 'uc_termsofservice_agreement_node',
     ),
   );
 }
@@ -64,7 +85,7 @@ function uc_termsofservice_cart_pane($items) {
     'desc' => t("Please confirm if you agree with our terms and conditions that apply on all our purchases."),
     'weight' => 6,
     'enabled' => $status,
-    'body' => !is_null($items) ? drupal_get_form('uc_termsofservice_cart_form', $items) : '',
+    'body' => !is_null($items) ? drupal_get_form('uc_termsofservice_agreement_cart_callback', $items) : '',
   );
   return $panes;
 }
@@ -89,8 +110,21 @@ function uc_termsofservice_checkout_pane() {
   return $panes;
 }
 
-function uc_termsofservice_cart_form($items) {
-  $form = uc_termsofservice_general_form();
+/**
+ * Callback form for cart pane.
+ */
+function uc_termsofservice_agreement_cart_callback($items) {
+  if (module_exists('modalframe') && variable_get('tos_popup', 0)) {
+    // If the modalframe module is enabled and the config for popups is
+     // then the ToS is shown in a popup
+    modalframe_parent_js();
+    drupal_add_js(drupal_get_path('module', 'uc_termsofservice') .'/uc_termsofservice.js');
+    $node = uc_termsofservice_get_node();
+    $form = uc_termsofservice_get_item($node->title, 'uc_termsofservice/show', '500,300');
+  }
+  else {
+    $form = uc_termsofservice_general_form();
+  }
   return $form;
 }
 
@@ -99,9 +133,78 @@ function uc_termsofservice_cart_form($items) {
  */
 function uc_termsofservice_general_form() {
   $form = array();
-  $nid = uc_termsofservice_get_nid_from_variable();
+  $node = uc_termsofservice_get_node();
+  $required = variable_get('tos_required', 0);
+  $form['tos_text'] = array(
+    '#value' => theme('uc_termsofservice_agreement_node', $node),
+  );
+  $form['tos_agree'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Terms of Service'),
+    '#options' => array('agreed' => t('I agree with the Terms of Service')),
+    '#required' => $required,
+  );
+  $form['#theme'] = 'uc_termsofservice_agreement_form';
+
+  if (module_exists('modalframe') && variable_get('tos_popup', 0)) {
+    // Send the Modal Frame javascript for child windows to the page.
+    modalframe_child_js();
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Submit'),
+    );
+    $form['tos_agree']['#attributes'] = array('onclick' => 'this.form.submit();');
+  }
+  return $form;
+}
+
+function uc_termsofservice_general_form_submit($form, &$form_state) {
+  modalframe_close_dialog(array('tos_selected' => $form_state['values']['tos_agree']));
+}
+
+/**
+ * Callback form for checkout pane.
+ */
+function uc_termsofservice_checkout_pane_callback($op) {
+  switch ($op) {
+    case 'view':
+      if (module_exists('modalframe') && variable_get('tos_popup', 0)) {
+        // If the modalframe module is enabled and the config for popups is
+         // then the ToS is shown in a popup
+        modalframe_parent_js();
+        drupal_add_js(drupal_get_path('module', 'uc_termsofservice') .'/uc_termsofservice.js');
+        $node = uc_termsofservice_get_node();
+        $form = uc_termsofservice_get_item($node->title, 'uc_termsofservice/show', '500,300');
+      }
+      else {
+        $form = uc_termsofservice_general_form();
+      }
+      return array('contents' => $form, 'next-button' => FALSE);
+      break;
+  }
+}
+
+/**
+ * Function that filters the node nid from the autocomplete string.
+ */
+function uc_termsofservice_get_nid_from_variable() {
+  $tos_node = variable_get('tos_node', 0);
+  $preg_matches = array();
+  $match = preg_match('/\[nid: (\d+)\]/', $tos_node, $preg_matches);
+  if ($match) {
+    $nid = $preg_matches[1];
+  }
+  return $nid;
+}
+
+/**
+ * Retrieves the ToS node from database.
+ */
+function uc_termsofservice_get_node($nid = NULL) {
+  if (!$nid) {
+    $nid = uc_termsofservice_get_nid_from_variable();
+  }
   if ($nid) {
-    $required = variable_get('tos_required', 0);
     if (module_exists('translation')) {
       global $language;
       $translations = translation_node_get_translations($nid);
@@ -110,47 +213,22 @@ function uc_termsofservice_general_form() {
       }
     }
     $node = node_load($nid);
-
-    $form['tos_text'] = array(
-      '#value' => $node->body,
-    );
-    $form['tos_agree'] = array(
-      '#type' => 'checkboxes',
-      '#title' => t('Terms of Service'),
-      '#options' => array(t('I agree with the Terms of Service')),
-      '#required' => $required,
-    );
-
-    $form['#theme'] = 'uc_termsofservice_agreement_form';
-    return $form;
+    return $node;
   }
   return;
 }
 
-function uc_termsofservice_form_alter(&$form, $form_state, $form_id) {
-  if ($form_id == 'uc_cart_view_form' && variable_get('tos_target', 0) == UC_TERMSOFSERVICE_CART && variable_get('tos_required', 0)) {
-    $form['#validate'][] = 'uc_termsofservice_validate_required';
-  }
-}
-
-function uc_termsofservice_validate_required($form, &$form_state) {
-}
-
-function uc_termsofservice_checkout_pane_callback($op) {
-  switch ($op) {
-    case 'view':
-      $form = uc_termsofservice_general_form();
-      return array('contents' => $form, 'next-button' => FALSE);
-      break;
-  }
-}
-
-function uc_termsofservice_get_nid_from_variable() {
-  $tos_node = variable_get('tos_node', 0);
-  $preg_matches = array();
-  $match = preg_match('/\[nid: (\d+)\]/',$tos_node, $preg_matches);
-  if ($match) {
-    $nid = $preg_matches[1];
-  }
-  return $nid;
+/**
+ * Helper function for ModalFrame to build links to popup page.
+ */
+function uc_termsofservice_get_item($title, $path, $size = NULL) {
+  $options = array('attributes' => array('class' => 'uc_termsofservice-child'. (!empty($size) ? ' uc_termsofservice-size['. $size .']' : '')));
+  $required = variable_get('tos_required', 0);
+  $form['tos_agree_popup'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Terms of Service'),
+    '#options' => array('agreed' => t('I agree with the !tos', array('!tos' => l($title, $path, $options)))),
+    '#required' => $required,
+  );
+  return $form;
 }

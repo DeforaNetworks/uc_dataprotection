@@ -1,7 +1,14 @@
 <?php
-// $Id;
+// $Id$
 
+/**
+ * @file
+ * Settings for Ubercart Terms of Service.
+ */
 
+/**
+ * Form to configure the settings.
+ */
 function uc_termsofservice_admin_settings() {
   $form = array();
 
@@ -9,17 +16,19 @@ function uc_termsofservice_admin_settings() {
     '#type' => 'radios',
     '#title' => t('Select where the ToS information will be shown'),
     '#options' => array(
-      0 =>t('disabled'),
+      0 => t('disabled'),
       UC_TERMSOFSERVICE_CART => t('cart'),
       UC_TERMSOFSERVICE_CHECKOUT => t('checkout'),
     ),
     '#default_value' => variable_get('tos_target', 0),
+    '#weight' => -3,
   );
 
   $form['tos_required'] = array(
     '#type' => 'checkbox',
-    '#title' => t('ToS agreement is required'),
+    '#title' => t('ToS agreement is required (Only for checkout)'),
     '#default_value' => variable_get('tos_required', 0),
+    '#weight' => -2,
   );
 
   $form['tos_node'] = array(
@@ -27,11 +36,24 @@ function uc_termsofservice_admin_settings() {
     '#title' => t('Select the node that corresponds to the Terms of Service'),
     '#autocomplete_path' => 'uc_termsofservice/node/autocomplete',
     '#default_value' => variable_get('tos_node', NULL),
+    '#weight' => 0,
   );
 
+  if (module_exists('modalframe')) {
+    $form['tos_popup'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Open ToS in a popup modal window.'),
+      '#default_value' => variable_get('tos_popup', 0),
+      '#weight' => -1,
+    );
+
+  }
   return system_settings_form($form);
 }
 
+/**
+ * Autocomplete callback, taken from panels module
+ */
 function uc_termsofservice_node_autocomplete($string) {
   if ($string != '') { // if there are node_types passed, we'll use those in a MySQL IN query.
     $preg_matches = array();

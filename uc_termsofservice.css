@@ -6,3 +6,7 @@
   margin: 0 0 10px 0;
   display: block;
 }
+
+#uc-termsofservice-general-form #edit-submit {
+  display: none;
+}
