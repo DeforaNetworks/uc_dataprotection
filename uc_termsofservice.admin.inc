@@ -12,7 +12,7 @@
 function uc_termsofservice_admin_settings() {
   $form = array();
 
-  $form['tos_target'] = array(
+  $form['uc_termsofservice_target'] = array(
     '#type' => 'radios',
     '#title' => t('Select where the ToS information will be shown'),
     '#options' => array(
@@ -24,14 +24,14 @@ function uc_termsofservice_admin_settings() {
     '#weight' => -3,
   );
 
-  $form['tos_required'] = array(
+  $form['uc_termsofservice_required'] = array(
     '#type' => 'checkbox',
     '#title' => t('ToS agreement is required (Only for checkout)'),
     '#default_value' => variable_get('uc_termsofservice_required', 0),
     '#weight' => -2,
   );
 
-  $form['tos_node'] = array(
+  $form['uc_termsofservice_node'] = array(
     '#type' => 'textfield',
     '#title' => t('Select the node that corresponds to the Terms of Service'),
     '#autocomplete_path' => 'uc_termsofservice/node/autocomplete',
@@ -40,7 +40,7 @@ function uc_termsofservice_admin_settings() {
   );
 
   if (module_exists('modalframe')) {
-    $form['tos_popup'] = array(
+    $form['uc_termsofservice_popup'] = array(
       '#type' => 'checkbox',
       '#title' => t('Open ToS in a popup modal window.'),
       '#default_value' => variable_get('uc_termsofservice_popup', 0),
