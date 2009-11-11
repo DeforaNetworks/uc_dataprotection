@@ -134,28 +134,31 @@ function uc_termsofservice_agreement_cart_callback($items) {
 function uc_termsofservice_general_form() {
   $form = array();
   $node = uc_termsofservice_get_node();
-  $required = variable_get('tos_required', 0);
-  $form['tos_text'] = array(
-    '#value' => theme('uc_termsofservice_agreement_node', $node),
-  );
-  $form['tos_agree'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Terms of Service'),
-    '#options' => array('agreed' => t('I agree with the Terms of Service')),
-    '#required' => $required,
-  );
-  $form['#theme'] = 'uc_termsofservice_agreement_form';
-
-  if (module_exists('modalframe') && variable_get('uc_termsofservice_popup', 0)) {
-    // Send the Modal Frame javascript for child windows to the page.
-    modalframe_child_js();
-    $form['submit'] = array(
-      '#type' => 'submit',
-      '#value' => t('Submit'),
+  if ($node) {
+    $required = variable_get('tos_required', 0);
+    $form['tos_text'] = array(
+      '#value' => theme('uc_termsofservice_agreement_node', $node),
     );
-    $form['tos_agree']['#attributes'] = array('onclick' => 'this.form.submit();');
+    $form['tos_agree'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Terms of Service'),
+      '#options' => array('agreed' => t('I agree with the Terms of Service')),
+      '#required' => $required,
+    );
+    $form['#theme'] = 'uc_termsofservice_agreement_form';
+
+    if (module_exists('modalframe') && variable_get('uc_termsofservice_popup', 0)) {
+      // Send the Modal Frame javascript for child windows to the page.
+      modalframe_child_js();
+      $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Submit'),
+      );
+      $form['tos_agree']['#attributes'] = array('onclick' => 'this.form.submit();');
+    }
+    return $form;
   }
-  return $form;
+  return;
 }
 
 function uc_termsofservice_general_form_submit($form, &$form_state) {
