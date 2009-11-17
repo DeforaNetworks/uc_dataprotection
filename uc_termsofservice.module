@@ -135,7 +135,7 @@ function uc_termsofservice_general_form() {
   $form = array();
   $node = uc_termsofservice_get_node();
   if ($node) {
-    $required = variable_get('tos_required', 0);
+    $required = variable_get('uc_termsofservice_required', 0);
     $form['tos_text'] = array(
       '#value' => theme('uc_termsofservice_agreement_node', $node),
     );
