@@ -1,5 +1,12 @@
 <?php
-drupal_add_css(drupal_get_path('module', 'uc_termsofservice').'/uc_termsofservice.css', 'theme', 'all');
+// $Id$
+
+/**
+ * @file
+ * Template file for agreement form.
+ */
+
+drupal_add_css(drupal_get_path('module', 'uc_termsofservice') .'/uc_termsofservice.css', 'theme', 'all');
 ?>
 
 <div class="tos-text">

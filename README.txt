@@ -5,12 +5,21 @@ Terms of Service (ToS) in the Checkout pane or in the Cart pane.
 -- Installation --
 Just enable the module, cart module and checkout module of ubercart are 
 required.
-The configuration panel of this module can be found in Store Administration > 
-Configuration > Terms of Service (admin/store/settings/tos).
-You can select there if the ToS is placed in cart or checkout pane, if they are
-required and the node corresponding to the ToS.
+The configuration of this module is merged into the Ubercart pane settings.
+You can configure the options for checkout in panes' checkout configuration
+page (admin/store/settings/checkout/edit/panes) and for cart in panes' cart
+configuration page (admin/store/settings/cart/edit/panes).
+
+Options available for configuration:
+- Whether the ToS is displayed or not in cart and/or checkout pages.
+- The weight of the pane.
+- The node you want for ToS page.
+- In case of checkout, if the ToS is required or not.
+- If ModalFrame API is present, you can also select if the ToS is displayed in
+a popup window.
+
 Multilanguage is supported through the Translation module. You can translate the
-ToS node and the correct translation will appear depending of the language.
+ToS node and the correct translation will be displayed depending of the language.
 
 -- ToS in js popup --
 You can enable the ModalFrame API (http://drupal.org/project/modalframe) module
