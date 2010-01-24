@@ -22,8 +22,10 @@ function uc_termsofservice_menu() {
    * modalframe callback items
    */
   if (module_exists('modalframe')) {
-    $items['uc_termsofservice/show'] = array(
+    $items['uc_termsofservice/show/%node'] = array(
       'title'             => 'Show Terms of Service',
+      'title callback'    => 'uc_termsofservice_title_callback',
+      'title arguments'   => array(2),
       'page callback'     => 'drupal_get_form',
       'page arguments'    => array('uc_termsofservice_general_form'),
       'access callback'   => TRUE,
@@ -43,10 +45,6 @@ function uc_termsofservice_theme() {
       'arguments' => array('form' => NULL),
       'template' => 'uc_termsofservice_agreement_form',
     ),
-    'uc_termsofservice_agreement_node' => array(
-      'arguments' => array('node' => NULL),
-      'template' => 'uc_termsofservice_agreement_node',
-    ),
   );
 }
 
@@ -58,9 +56,10 @@ function uc_termsofservice_theme() {
  * Implementation of hook_cart_pane().
  */
 function uc_termsofservice_cart_pane($items) {
+  $node = uc_termsofservice_get_node('cart');
   $panes[] = array(
     'id' => 'uc_termsofservice_agreement_cart',
-    'title' => t('Terms and conditions agreement'),
+    'title' => t('@title', array('@title' => $node->title)),
     'desc' => t("Please confirm if you agree with our terms and conditions that apply on all our purchases."),
     'weight' => 6,
     'body' => !is_null($items) ? drupal_get_form('uc_termsofservice_agreement_cart_callback', $items) : '',
@@ -72,10 +71,11 @@ function uc_termsofservice_cart_pane($items) {
  * Implementation of hook_checkout_pane().
  */
 function uc_termsofservice_checkout_pane() {
+  $node = uc_termsofservice_get_node('checkout');
   $panes[] = array(
     'id' => 'uc_termsofservice_agreement_checkout',
     'callback' => 'uc_termsofservice_checkout_pane_callback',
-    'title' => t('Terms and conditions agreement'),
+    'title' => t('@title', array('@title' => $node->title)),
     'desc' => t("Please confirm if you agree with our terms and conditions that apply on all our purchases."),
     'weight' => 6,
     'collapsible' => TRUE,
@@ -93,7 +93,7 @@ function uc_termsofservice_agreement_cart_callback($items) {
     modalframe_parent_js();
     drupal_add_js(drupal_get_path('module', 'uc_termsofservice') .'/uc_termsofservice.js');
     $node = uc_termsofservice_get_node('cart');
-    $form = uc_termsofservice_get_item('cart', $node->title, 'uc_termsofservice/show', '500,300');
+    $form = uc_termsofservice_get_item('cart', $node->title, 'uc_termsofservice/show/'. $node->nid, '500,300');
   }
   else {
     $form = uc_termsofservice_general_form(array(), 'cart');
@@ -113,12 +113,12 @@ function uc_termsofservice_general_form($form_state, $type = NULL) {
   if ($node) {
     $required = variable_get('uc_termsofservice_'. $type .'_required', 0);
     $form['tos_text'] = array(
-      '#value' => theme('uc_termsofservice_agreement_node', $node),
+      '#value' => node_view($node, FALSE, TRUE, FALSE),
     );
     $form['tos_agree'] = array(
       '#type' => 'checkboxes',
-      '#title' => t('Terms of Service'),
-      '#options' => array('agreed' => t('I agree with the Terms of Service')),
+      '#title' => t('@title', array('@title' => $node->title)),
+      '#options' => array('agreed' => t('I agree with the terms above')),
       '#required' => $required,
     );
     $form['#theme'] = 'uc_termsofservice_agreement_form';
@@ -153,7 +153,7 @@ function uc_termsofservice_checkout_pane_callback($op) {
         modalframe_parent_js();
         drupal_add_js(drupal_get_path('module', 'uc_termsofservice') .'/uc_termsofservice.js');
         $node = uc_termsofservice_get_node('checkout');
-        $form = uc_termsofservice_get_item('checkout', $node->title, 'uc_termsofservice/show', '500,300');
+        $form = uc_termsofservice_get_item('checkout', $node->title, 'uc_termsofservice/show/'. $node->nid, '500,300');
       }
       else {
         $form = uc_termsofservice_general_form(array(), 'checkout');
@@ -209,7 +209,7 @@ function uc_termsofservice_get_item($type = NULL, $title, $path, $size = NULL) {
   $required = variable_get('uc_termsofservice_'. $type .'_required', 0);
   $form['tos_agree_popup'] = array(
     '#type' => 'checkboxes',
-    '#title' => t('Terms of Service'),
+    'title' => t('@title', array('@title' => $node->title)),
     '#options' => array('agreed' => t('I agree with the !tos', array('!tos' => l($title, $path .'/'. $type, $options)))),
     '#required' => $required,
   );
@@ -235,7 +235,7 @@ function uc_termsofservice_admin_form($type = NULL) {
 
     $form['uc_termsofservice_'. $type .'_node'] = array(
       '#type' => 'textfield',
-      '#title' => t('Select the node that corresponds to the Terms of Service'),
+      '#title' => t('Select the node that corresponds to the Terms of Service. Note that this node will be shown regardless of node access permissions.'),
       '#autocomplete_path' => 'uc_termsofservice/node/autocomplete',
       '#default_value' => variable_get('uc_termsofservice_'. $type .'_node', NULL),
       '#weight' => 0,
@@ -288,6 +288,9 @@ function uc_termsofservice_node_autocomplete($string) {
       $arg = $string;
       $where = "LOWER(title) LIKE LOWER('%%%s%%')";
     }
+    if (!user_access('administer nodes')) {
+      $where .= " AND n.status = 1";
+    }
     $result = db_query_range(db_rewrite_sql("SELECT n.nid, n.title, u.name FROM {node} n INNER JOIN {users} u ON u.uid = n.uid WHERE $where"), $arg, 0, 10);
 
     $matches = array();
@@ -298,3 +301,10 @@ function uc_termsofservice_node_autocomplete($string) {
     drupal_json($matches);
   }
 }
+
+/**
+ * Menu title callback
+ */
+function uc_termsofservice_title_callback($node = NULL) {
+  return t('@title', array('@title' => $node->title));
+} 
