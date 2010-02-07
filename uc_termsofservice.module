@@ -57,9 +57,13 @@ function uc_termsofservice_theme() {
  */
 function uc_termsofservice_cart_pane($items) {
   $node = uc_termsofservice_get_node('cart');
+  $title = t('Terms of Service');
+  if ($node->title) {
+    $title = $node->title;
+  }
   $panes[] = array(
     'id' => 'uc_termsofservice_agreement_cart',
-    'title' => t('@title', array('@title' => $node->title)),
+    'title' => t('@title', array('@title' => $title)),
     'desc' => t("Please confirm if you agree with our terms and conditions that apply on all our purchases."),
     'weight' => 6,
     'body' => !is_null($items) ? drupal_get_form('uc_termsofservice_agreement_cart_callback', $items) : '',
@@ -72,10 +76,14 @@ function uc_termsofservice_cart_pane($items) {
  */
 function uc_termsofservice_checkout_pane() {
   $node = uc_termsofservice_get_node('checkout');
+  $title = t('Terms of Service');
+  if ($node->title) {
+    $title = $node->title;
+  }
   $panes[] = array(
     'id' => 'uc_termsofservice_agreement_checkout',
     'callback' => 'uc_termsofservice_checkout_pane_callback',
-    'title' => t('@title', array('@title' => $node->title)),
+    'title' => t('@title', array('@title' => $title)),
     'desc' => t("Please confirm if you agree with our terms and conditions that apply on all our purchases."),
     'weight' => 6,
     'collapsible' => TRUE,
@@ -306,5 +314,9 @@ function uc_termsofservice_node_autocomplete($string) {
  * Menu title callback
  */
 function uc_termsofservice_title_callback($node = NULL) {
-  return t('@title', array('@title' => $node->title));
+  $title = t('Terms of Service');
+  if ($node->title) {
+    $title = $node->title;
+  }
+  return t('@title', array('@title' => $title));
 } 
