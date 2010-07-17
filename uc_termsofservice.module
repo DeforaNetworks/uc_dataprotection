@@ -237,11 +237,9 @@ function uc_termsofservice_get_node($type = NULL, $nid = NULL) {
  */
 function uc_termsofservice_get_item($type = NULL, $title, $path, $size = NULL) {
   $options = array('attributes' => array('class' => 'uc_termsofservice-child'. (!empty($size) ? ' uc_termsofservice-size['. $size .']' : '')));
-  $required = variable_get('uc_termsofservice_'. $type .'_required', 0);
   $form['tos_agree_popup'] = array(
     '#type' => 'checkboxes',
     '#options' => array('agreed' => t('I agree with the !tos', array('!tos' => l($title, $path .'/'. $type, $options)))),
-    '#required' => $required,
   );
   return $form;
 }
@@ -338,7 +336,13 @@ function uc_termsofservice_form_alter(&$form, $form_state, $form_id) {
 function uc_termsofservice_checkout_form_validate($form, &$form_state) {
   $required = variable_get('uc_termsofservice_checkout_required', 0);
   if ($required) {
-    $agreed = $form_state['values']['panes']['uc_termsofservice_agreement_checkout']['tos_agree']['agreed'];
+    $popup = variable_get('uc_termsofservice_checkout_popup', 0);
+    if (!$popup) {
+      $agreed = $form_state['values']['panes']['uc_termsofservice_agreement_checkout']['tos_agree']['agreed'];
+    }
+    else {
+      $agreed = $form_state['values']['panes']['uc_termsofservice_agreement_checkout']['tos_agree_popup']['agreed'];
+    }
     if (!$agreed) {
       $node = uc_termsofservice_get_node('checkout');
       form_set_error('tos_agree', t("In order to continue with the checkout process, you should accept first the !tos", array('!tos' => $node->title)));

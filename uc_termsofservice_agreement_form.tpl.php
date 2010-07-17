@@ -5,7 +5,7 @@
  * @file
  * Template file for agreement form.
  */
-
+ 
 drupal_add_css(drupal_get_path('module', 'uc_termsofservice') .'/uc_termsofservice.css', 'theme', 'all');
 ?>
 
