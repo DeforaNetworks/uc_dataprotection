@@ -1,6 +1,6 @@
 #uc_termsofservice_agreement_checkout-pane .tos-text {
   border: 1px solid #D2E6F3;
-  overflow: scroll;
+  overflow: auto;
   height: 200px;
   padding: 5px;
   margin: 0 0 10px 0;

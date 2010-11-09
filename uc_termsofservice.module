@@ -334,18 +334,21 @@ function uc_termsofservice_form_alter(&$form, $form_state, $form_id) {
  * This way, we can display a better required message.
  */
 function uc_termsofservice_checkout_form_validate($form, &$form_state) {
-  $required = variable_get('uc_termsofservice_checkout_required', 0);
-  if ($required) {
-    $popup = variable_get('uc_termsofservice_checkout_popup', 0);
-    if (!$popup) {
-      $agreed = $form_state['values']['panes']['uc_termsofservice_agreement_checkout']['tos_agree']['agreed'];
-    }
-    else {
-      $agreed = $form_state['values']['panes']['uc_termsofservice_agreement_checkout']['tos_agree_popup']['agreed'];
-    }
-    if (!$agreed) {
-      $node = uc_termsofservice_get_node('checkout');
-      form_set_error('tos_agree', t("In order to continue with the checkout process, you should accept first the !tos", array('!tos' => $node->title)));
+  // Only check for validation when the pane really exists.
+  if (isset($form_state['values']['panes']['uc_termsofservice_agreement_checkout'])) {
+    $required = variable_get('uc_termsofservice_checkout_required', 0);
+    if ($required) {
+      $popup = variable_get('uc_termsofservice_checkout_popup', 0);
+      if (!$popup) {
+        $agreed = $form_state['values']['panes']['uc_termsofservice_agreement_checkout']['tos_agree']['agreed'];
+      }
+      else {
+        $agreed = $form_state['values']['panes']['uc_termsofservice_agreement_checkout']['tos_agree_popup']['agreed'];
+      }
+      if (!$agreed) {
+        $node = uc_termsofservice_get_node('checkout');
+        form_set_error('tos_agree', t("In order to continue with the checkout process, you should accept first the !tos", array('!tos' => $node->title)));
+      }
     }
   }
 }

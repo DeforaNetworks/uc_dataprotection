@@ -45,6 +45,8 @@ You can also add extra conditions and actions.
 
 -- Know Issues --
 The ToS can be placed as a cart pane, but then it won't be required. 
+If you are using Secure Pages for a version of the checkout in SSL, you should 
+add uc_termsofservice/* to the Secure Pages settings.
 
 If you need a previous agreement checkbox, i.e. in the registration of the 
 users, please take a look to the Legal (http://drupal.org/project/legal) or 

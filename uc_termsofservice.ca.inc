@@ -7,7 +7,6 @@
  * display the terms of service panes.
  */
 
-
 /**
  * Ubercart Conditional Actions.
  */
@@ -56,7 +55,6 @@ function uc_termsofservice_ca_trigger() {
       'cart' => array('#entity' => 'cart', '#title' => t('Cart')),
     ),
   );
-
   return $triggers;
 }
 
