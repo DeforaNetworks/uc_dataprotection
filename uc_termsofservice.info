@@ -1,4 +1,3 @@
-; $Id$
 name = Terms of Service
 description = Terms of Service for Ubercart
 dependencies[] = uc_store

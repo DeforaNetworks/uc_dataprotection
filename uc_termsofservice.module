@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 // Include the conditional actions for displaying the panes.
 require_once('uc_termsofservice.ca.inc');
