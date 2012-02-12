@@ -63,7 +63,7 @@ function uc_termsofservice_theme() {
 function uc_termsofservice_uc_cart_pane($items) {
   $node = uc_termsofservice_get_node('cart');
   $title = t('Terms of Service');
-  if ($node->title) {
+  if (isset($node->title)) {
     $title = $node->title;
   }
   $panes[] = array(
@@ -82,7 +82,7 @@ function uc_termsofservice_uc_cart_pane($items) {
 function uc_termsofservice_uc_checkout_pane() {
   $node = uc_termsofservice_get_node('checkout');
   $title = t('Terms of Service');
-  if ($node->title) {
+  if (isset($node->title)) {
     $title = $node->title;
   }
   $panes[] = array(
@@ -211,12 +211,15 @@ function uc_termsofservice_checkout_pane_callback($op) {
  * Function that filters the node nid from the autocomplete string.
  */
 function uc_termsofservice_get_nid_from_variable($type = NULL) {
-  $tos_node = variable_get('uc_termsofservice_' . $type . '_node', 0);
+  $nid = 0;
+
+  $tos_node = variable_get('uc_termsofservice_' . $type . '_node', $nid);
   $preg_matches = array();
   $match = preg_match('/\[nid: (\d+)\]/', $tos_node, $preg_matches);
   if ($match) {
     $nid = $preg_matches[1];
   }
+
   return $nid;
 }
 
@@ -367,31 +370,45 @@ function uc_termsofservice_checkout_form_validate($form, &$form_state) {
  * Autocomplete callback, taken from panels module.
  */
 function uc_termsofservice_node_autocomplete($string) {
-  if ($string != '') { // if there are node_types passed, we'll use those in a MySQL IN query.
+  // If there are node_types passed, we'll use those in a MySQL IN query.
+  if ($string != '') {
+    $query = db_select('node', 'n')
+      ->fields('n', array('nid', 'title'));
+    $query->join('users', 'u', 'u.uid = n.uid');
+    $query->fields('u', array('name'));
+
     $preg_matches = array();
     $match = preg_match('/\[nid: (\d+)\]/', $string, $preg_matches);
     if (!$match) {
       $match = preg_match('/^nid: (\d+)/', $string, $preg_matches);
     }
     if ($match) {
-      $arg = $preg_matches[1];
-      $where = "n.nid = %d";
+      //$where = "n.nid = %d";
+      $query->condition('n.nid', $preg_matches[1]);
     }
     else {
-      $arg = $string;
-      $where = "LOWER(title) LIKE LOWER('%%%s%%')";
+      //$arg = $string;
+      //$where = "LOWER(title) LIKE LOWER('%%%s%%')";
+      $query->condition('n.title', '%' . db_like($string) . '%', 'LIKE');
     }
     if (!user_access('administer nodes')) {
-      $where .= " AND n.status = 1";
+      //$where .= " AND n.status = 1";
+      $query->condition('n.status', 1);
     }
-    $result = db_query_range(db_rewrite_sql("SELECT n.nid, n.title, u.name FROM {node} n INNER JOIN {users} u ON u.uid = n.uid WHERE $where"), $arg, 0, 10);
+
+    $result = $query->execute();
+
+    //$result = db_query_range(db_rewrite_sql("SELECT n.nid, n.title, u.name FROM {node} n INNER JOIN {users} u ON u.uid = n.uid WHERE $where"), $arg, 0, 10);
+
 
     $matches = array();
-    while ($node = db_fetch_object($result)) {
+    foreach ($result as $node) {
       $name = empty($node->name) ? variable_get('anonymous', t('Anonymous')) : check_plain($node->name);
       $matches[$node->title . " [nid: $node->nid]"] = '<span class="autocomplete_title">' . check_plain($node->title) . '</span> <span class="autocomplete_user">(' . t('by @user', array('@user' => $name)) . ')</span>';
     }
-    drupal_json($matches);
+
+    // Return the results to the form in json.
+    drupal_json_output($matches);
   }
 }
 
