@@ -15,24 +15,23 @@ function uc_termsofservice_menu() {
   $items = array();
 
   $items['uc_termsofservice/node/autocomplete'] = array(
-    'title'             => 'Autocomplete of nodes',
-    'page callback'     => 'uc_termsofservice_node_autocomplete',
-    'access callback'   => TRUE,
-    'type'              => MENU_CALLBACK,
+    'title'           => 'Autocomplete of nodes',
+    'page callback'   => 'uc_termsofservice_node_autocomplete',
+    'access callback' => TRUE,
+    'type'            => MENU_CALLBACK,
   );
 
-  /**
-   * modalframe callback items
-   */
+  // modalframe callback items
   if (module_exists('modalframe')) {
     $items['uc_termsofservice/show/%node'] = array(
-      'title'             => 'Show Terms of Service',
-      'title callback'    => 'uc_termsofservice_title_callback',
-      'title arguments'   => array(2),
-      'page callback'     => 'drupal_get_form',
-      'page arguments'    => array('uc_termsofservice_general_form'),
-      'access callback'   => TRUE,
-      'type'              => MENU_CALLBACK,
+      'title'           => 'Show Terms of Service',
+      'title callback'  => 'uc_termsofservice_title_callback',
+      'title arguments' => array(2),
+      'page callback'   => 'drupal_get_form',
+      'page arguments'  => array('uc_termsofservice_general_form'),
+      'access callback' => TRUE,
+      'type'            => MENU_CALLBACK,
+//      'file'            => 'uc_termsofservice.admin.inc',
     );
   }
 
@@ -45,8 +44,11 @@ function uc_termsofservice_menu() {
 function uc_termsofservice_theme() {
   return array(
     'uc_termsofservice_agreement_form' => array(
-      'arguments' => array('form' => NULL),
-      'template' => 'uc_termsofservice_agreement_form',
+      'variables' => array(
+        'form' => NULL
+      ),
+      'template'  => 'uc_termsofservice_agreement_form',
+      'file'      => 'uc_termsofservice.module',
     ),
   );
 }
@@ -56,9 +58,9 @@ function uc_termsofservice_theme() {
  */
 
 /**
- * Implements hook_cart_pane().
+ * Implements hook_uc_cart_pane().
  */
-function uc_termsofservice_cart_pane($items) {
+function uc_termsofservice_uc_cart_pane($items) {
   $node = uc_termsofservice_get_node('cart');
   $title = t('Terms of Service');
   if ($node->title) {
@@ -75,9 +77,9 @@ function uc_termsofservice_cart_pane($items) {
 }
 
 /**
- * Implements hook_checkout_pane().
+ * Implements hook_uc_checkout_pane().
  */
-function uc_termsofservice_checkout_pane() {
+function uc_termsofservice_uc_checkout_pane() {
   $node = uc_termsofservice_get_node('checkout');
   $title = t('Terms of Service');
   if ($node->title) {
