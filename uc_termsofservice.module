@@ -1,11 +1,12 @@
 <?php
 
-// Include the conditional actions for displaying the panes.
-require_once('uc_termsofservice.ca.inc');
-
 /**
+ * @file
  * Ubercart Terms of Service.
  */
+
+// Include the conditional actions for displaying the panes.
+require_once('uc_termsofservice.ca.inc');
 
 /**
  * Implements hook_menu().

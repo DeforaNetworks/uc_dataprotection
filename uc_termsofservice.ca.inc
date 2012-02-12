@@ -5,7 +5,6 @@
  * Conditional Actions hooks and functions for the terms of service panes.
  */
 
-
 /**
  * Implements hook_ca_predicate().
  */

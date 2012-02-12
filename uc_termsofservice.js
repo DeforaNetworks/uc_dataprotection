@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Terms of Service modal frames.
+ */
+
 (function ($) {
 
 Drupal.behaviors.uc_termsofservice_modalframe = function() {
