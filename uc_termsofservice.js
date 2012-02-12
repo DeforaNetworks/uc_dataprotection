@@ -1,10 +1,9 @@
-
 (function ($) {
-  
+
 Drupal.behaviors.uc_termsofservice_modalframe = function() {
   $('.uc_termsofservice-child:not(.modalframe-tos-processed)').addClass('modalframe-tos-processed').click(function() {
     var element = this;
-    
+
     function onSubmitCallbackToS(args, statusMessages){
      if (args && args.tos_selected.agreed) {
        if (args.tos_selected.agreed == 'agreed') {
@@ -15,7 +14,7 @@ Drupal.behaviors.uc_termsofservice_modalframe = function() {
        }
      }
     }
-    
+
     // Build modal frame options.
     var modalOptions = {
       url: $(element).attr('href'),
@@ -33,7 +32,7 @@ Drupal.behaviors.uc_termsofservice_modalframe = function() {
 
     // Open the modal frame dialog.
     Drupal.modalFrame.open(modalOptions);
-    
+
     // Prevent default action of the link click event.
     return false;
   });

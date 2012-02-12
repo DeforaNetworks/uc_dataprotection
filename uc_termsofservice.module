@@ -8,7 +8,7 @@ require_once('uc_termsofservice.ca.inc');
  */
 
 /**
- * Implementation of hook_menu().
+ * Implements hook_menu().
  */
 function uc_termsofservice_menu() {
   $items = array();
@@ -39,7 +39,7 @@ function uc_termsofservice_menu() {
 }
 
 /**
- * Implementation of hook_theme().
+ * Implements hook_theme().
  */
 function uc_termsofservice_theme() {
   return array(
@@ -55,7 +55,7 @@ function uc_termsofservice_theme() {
  */
 
 /**
- * Implementation of hook_cart_pane().
+ * Implements hook_cart_pane().
  */
 function uc_termsofservice_cart_pane($items) {
   $node = uc_termsofservice_get_node('cart');
@@ -74,7 +74,7 @@ function uc_termsofservice_cart_pane($items) {
 }
 
 /**
- * Implementation of hook_checkout_pane().
+ * Implements hook_checkout_pane().
  */
 function uc_termsofservice_checkout_pane() {
   $node = uc_termsofservice_get_node('checkout');
@@ -114,7 +114,9 @@ function uc_termsofservice_agreement_cart_callback($items) {
 }
 
 /**
- * General form for both checkout & cart modes
+ * General form for both checkout & cart modes.
+ *
+ * @see uc_termsofservice_general_form_submit()
  */
 function uc_termsofservice_general_form($form_state, $type = NULL) {
   $form = array();
@@ -146,6 +148,11 @@ function uc_termsofservice_general_form($form_state, $type = NULL) {
   return;
 }
 
+/**
+ * Submit handler for uc_termsofservice_general_form().
+ *
+ * @see uc_termsofservice_general_form()
+ */
 function uc_termsofservice_general_form_submit($form, &$form_state) {
   modalframe_close_dialog(array('tos_selected' => $form_state['values']['tos_agree']));
 }
@@ -307,7 +314,7 @@ function uc_termsofservice_admin_form($type = NULL) {
 }
 
 /**
- * Implementation of hook_form_alter().
+ * Implements hook_form_alter().
  */
 function uc_termsofservice_form_alter(&$form, $form_state, $form_id) {
   if ($form_id == 'uc_cart_cart_panes_form') {
@@ -330,6 +337,7 @@ function uc_termsofservice_form_alter(&$form, $form_state, $form_id) {
 
 /**
  * Validate function for checkout, if required by config.
+ *
  * This way, we can display a better required message.
  */
 function uc_termsofservice_checkout_form_validate($form, &$form_state) {
@@ -353,7 +361,7 @@ function uc_termsofservice_checkout_form_validate($form, &$form_state) {
 }
 
 /**
- * Autocomplete callback, taken from panels module
+ * Autocomplete callback, taken from panels module.
  */
 function uc_termsofservice_node_autocomplete($string) {
   if ($string != '') { // if there are node_types passed, we'll use those in a MySQL IN query.
@@ -385,7 +393,7 @@ function uc_termsofservice_node_autocomplete($string) {
 }
 
 /**
- * Menu title callback
+ * Menu title callback.
  */
 function uc_termsofservice_title_callback($node = NULL) {
   $title = t('Terms of Service');

@@ -2,16 +2,12 @@
 
 /**
  * @file
- * This file contains the Conditional Actions hooks and functions necessary to
- * display the terms of service panes.
+ * Conditional Actions hooks and functions for the terms of service panes.
  */
 
-/**
- * Ubercart Conditional Actions.
- */
 
 /**
- * Implementation of hook_ca_predicate().
+ * Implements hook_ca_predicate().
  */
 function uc_termsofservice_ca_predicate() {
 
@@ -43,7 +39,7 @@ function uc_termsofservice_ca_predicate() {
 }
 
 /**
- * Implementation of hook_ca_trigger().
+ * Implements hook_ca_trigger().
  */
 function uc_termsofservice_ca_trigger() {
 
@@ -58,7 +54,7 @@ function uc_termsofservice_ca_trigger() {
 }
 
 /**
- * Implementation of hook_ca_condition().
+ * Implements hook_ca_condition().
  */
 function uc_termsofservice_ca_condition() {
   $conditions['uc_termsofservice_condition_product_class'] = array(
@@ -78,7 +74,7 @@ function uc_termsofservice_ca_condition() {
  */
 
 /**
- * Check that an order has a product of the selected class.
+ * Checks that an order has a product of the selected class.
  *
  * @see uc_termsofservice_condition_product_class_form()
  */

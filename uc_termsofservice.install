@@ -2,11 +2,11 @@
 
 /**
  * @file
- * Hooks invoked when the module is being installed or uninstalled.
+ * Install, update, and uninstall functions for the uc_termsofservice module.
  */
 
 /**
- * Implementations hook_uninstall().
+ * Implements hook_uninstall().
  */
 function uc_termsofservice_uninstall() {
 // Delete all module variables and then clear the variable cache.
@@ -15,7 +15,7 @@ function uc_termsofservice_uninstall() {
 }
 
 /**
- * Implementation of hook_update_N().
+ * Implements hook_update_N().
  */
 function uc_termsofservice_update_6101() {
   $ret = array();
