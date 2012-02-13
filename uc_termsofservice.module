@@ -48,7 +48,6 @@ function uc_termsofservice_theme() {
         'form' => NULL
       ),
       'template'  => 'uc_termsofservice_agreement_form',
-      'file'      => 'uc_termsofservice.module',
     ),
   );
 }
@@ -102,7 +101,7 @@ function uc_termsofservice_uc_checkout_pane() {
 function uc_termsofservice_agreement_cart_callback($items) {
   if (module_exists('modalframe') && variable_get('uc_termsofservice_cart_popup', 0)) {
     // If the modalframe module is enabled and the config for popups is
-     // then the ToS is shown in a popup.
+    // then the ToS is shown in a popup.
     modalframe_parent_js();
     drupal_add_js(drupal_get_path('module', 'uc_termsofservice') . '/uc_termsofservice.js');
     $node = uc_termsofservice_get_node('cart');
@@ -129,13 +128,13 @@ function uc_termsofservice_general_form($form_state, $type = NULL) {
   $node = uc_termsofservice_get_node($type);
   if ($node) {
     $form['tos_text'] = array(
-      '#value' => node_view($node, FALSE, TRUE, FALSE),
+      '#markup' => drupal_render(node_view($node, 'teaser')),
     );
     $form['tos_agree'] = array(
       '#type' => 'checkboxes',
       '#options' => array('agreed' => t('I agree with the terms above')),
     );
-    $form['#theme'] = 'uc_termsofservice_agreement_form';
+    //$form['#theme'] = 'uc_termsofservice_agreement_form';
 
     if (module_exists('modalframe') && variable_get('uc_termsofservice_' . $type . '_popup', 0)) {
       // Send the Modal Frame javascript for child windows to the page.
@@ -273,6 +272,7 @@ function uc_termsofservice_admin_form($type = NULL) {
       );
     }
 
+    // Autocomplete textfield for selecting the ToS node.
     $form['uc_termsofservice_' . $type . '_node'] = array(
       '#type' => 'textfield',
       '#title' => t('Select the node that corresponds to the Terms of Service. Note that this node will be shown regardless of node access permissions.'),
@@ -281,6 +281,7 @@ function uc_termsofservice_admin_form($type = NULL) {
       '#weight' => 0,
     );
 
+    // Container for advanced settings.
     $form['uc_termsofservice_advanced_settings'] = array(
       '#type' => 'fieldset',
       '#title' => t('Advanced settings'),
@@ -289,13 +290,15 @@ function uc_termsofservice_admin_form($type = NULL) {
       '#collapsed' => FALSE,
     );
 
+    // Checkbox to enable Rules.
     $form['uc_termsofservice_advanced_settings']['uc_termsofservice_' . $type . '_ca'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Enable Conditional Actions'),
-      '#description' => t('You can set the product classes in which the pane will be displayed with <a href="@url">conditional actions</a>', array('@url' => url('admin/store/ca/uc_termsofservice_display_pane/edit/conditions'))),
-      '#default_value' => variable_get('uc_termsofservice_' . $type . '_ca', 0),
+      '#title' => t('Enable Rules'),
+      '#description' => t('You can set the conditions under which the pane will be displayed with <a href="@url">Rules</a>', array('@url' => url('admin/workflow/rules/uc_termsofservice_display_pane/edit/conditions'))),
+      '#default_value' => variable_get('uc_termsofservice_' . $type . '_rules', 0),
     );
 
+    // Handle ToS in a popup window.
     if (module_exists('modalframe')) {
       $form['uc_termsofservice_advanced_settings']['uc_termsofservice_' . $type . '_popup'] = array(
         '#type' => 'checkbox',
@@ -315,36 +318,40 @@ function uc_termsofservice_admin_form($type = NULL) {
         '#size' => 4,
       );
     }
+
     return $form;
   }
 }
 
 /**
- * Implements hook_form_alter().
+ * Implements hook_form_FORM_ID_alter() for uc_cart_cart_panes_form.
  */
-function uc_termsofservice_form_alter(&$form, $form_state, $form_id) {
-  if ($form_id == 'uc_cart_cart_panes_form') {
-    $form['uc_termsofservice'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Terms of Service settings'),
-      '#weight' => 98,
-      '#collapsible' => TRUE,
-      '#collapsed' => FALSE,
-    );
-    $form['uc_termsofservice'] += uc_termsofservice_admin_form('cart');
-    $form['buttons']['#weight'] = 99;
-    return;
-  }
-  if ($form_id == 'uc_cart_checkout_form') {
-    $form['#validate'][] = 'uc_termsofservice_checkout_form_validate';
-    return;
-  }
+function uc_termsofservice_form_uc_cart_cart_panes_form_alter(&$form, &$form_state) {
+  $form['uc_termsofservice'] = array(
+    '#type'        => 'fieldset',
+    '#title'       => t('Terms of Service settings'),
+    '#weight'      => 98,
+    '#collapsible' => TRUE,
+    '#collapsed'   => FALSE,
+  );
+  $form['uc_termsofservice'] += uc_termsofservice_admin_form('cart');
+  $form['buttons']['#weight'] = 99;
 }
 
 /**
- * Validate function for checkout, if required by config.
+ * Implements hook_form_FORM_ID_alter() for uc_cart_checkout_form.
  *
- * This way, we can display a better required message.
+ * Adds validation function to check required agreement.
+ */
+function uc_termsofservice_form_uc_cart_checkout_form_alter(&$form, $form_state) {
+  $form['#validate'][] = 'uc_termsofservice_checkout_form_validate';
+}
+
+/**
+ * Validate function for checkout, if required by our configuration.
+ *
+ * This way, we can display a better 'required' message than the default
+ * Form API message for a required element.
  */
 function uc_termsofservice_checkout_form_validate($form, &$form_state) {
   // Only check for validation when the pane really exists.
@@ -373,33 +380,29 @@ function uc_termsofservice_node_autocomplete($string) {
   // If there are node_types passed, we'll use those in a MySQL IN query.
   if ($string != '') {
     $query = db_select('node', 'n')
-      ->fields('n', array('nid', 'title'));
+      ->fields('n', array('nid', 'title'))
+      ->addTag('node_access');
     $query->join('users', 'u', 'u.uid = n.uid');
     $query->fields('u', array('name'));
 
+    // Build query conditions.
     $preg_matches = array();
     $match = preg_match('/\[nid: (\d+)\]/', $string, $preg_matches);
     if (!$match) {
       $match = preg_match('/^nid: (\d+)/', $string, $preg_matches);
     }
     if ($match) {
-      //$where = "n.nid = %d";
       $query->condition('n.nid', $preg_matches[1]);
     }
     else {
-      //$arg = $string;
-      //$where = "LOWER(title) LIKE LOWER('%%%s%%')";
       $query->condition('n.title', '%' . db_like($string) . '%', 'LIKE');
     }
     if (!user_access('administer nodes')) {
-      //$where .= " AND n.status = 1";
       $query->condition('n.status', 1);
     }
 
+    // Execute the query.
     $result = $query->execute();
-
-    //$result = db_query_range(db_rewrite_sql("SELECT n.nid, n.title, u.name FROM {node} n INNER JOIN {users} u ON u.uid = n.uid WHERE $where"), $arg, 0, 10);
-
 
     $matches = array();
     foreach ($result as $node) {
