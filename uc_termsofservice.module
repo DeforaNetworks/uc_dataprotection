@@ -233,7 +233,7 @@ function uc_termsofservice_get_node($type = NULL, $nid = NULL) {
     if (module_exists('translation')) {
       global $language;
       $translations = translation_node_get_translations($nid);
-      if ($translations[$language->language]) {
+      if (isset($translations[$language->language])) {
         $nid = $translations[$language->language]->nid;
       }
     }
