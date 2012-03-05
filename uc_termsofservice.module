@@ -127,8 +127,9 @@ function uc_termsofservice_general_form($form_state, $type = NULL) {
   }
   $node = uc_termsofservice_get_node($type);
   if ($node) {
+    $view = node_view($node, 'teaser');
     $form['tos_text'] = array(
-      '#markup' => drupal_render(node_view($node, 'teaser')),
+      '#markup' => drupal_render($view),
     );
     $form['tos_agree'] = array(
       '#type' => 'checkboxes',
