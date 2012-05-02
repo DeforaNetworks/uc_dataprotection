@@ -273,7 +273,7 @@ function uc_termsofservice_admin_form($type = NULL) {
     );
 
     // Checkbox to enable Rules.
-    $form['uc_termsofservice_advanced_settings']['uc_termsofservice_' . $type . '_ca'] = array(
+    $form['uc_termsofservice_advanced_settings']['uc_termsofservice_' . $type . '_rules'] = array(
       '#type' => 'checkbox',
       '#title' => t('Enable Rules'),
       '#description' => t('You can set the conditions under which the pane will be displayed with <a href="@url">Rules</a>', array('@url' => url('admin/workflow/rules/uc_termsofservice_display_pane/edit/conditions'))),

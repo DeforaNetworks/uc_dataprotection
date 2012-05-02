@@ -15,3 +15,13 @@ function uc_termsofservice_uninstall() {
     ->execute();
   cache_clear_all('variables', 'cache_bootstrap');
 }
+
+/**
+ * Renames uc_termsofservice_checkout_ca to uc_termsofservice_checkout_rules
+ * for D7.
+ */
+function uc_termsofservice_update_7100() {
+  variable_set('uc_termsofservice_checkout_rules',
+               variable_get('uc_termsofservice_checkout_ca', FALSE));
+  variable_del('uc_termsofservice_checkout_ca');
+}
