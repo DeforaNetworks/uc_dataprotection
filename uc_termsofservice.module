@@ -128,7 +128,14 @@ function uc_termsofservice_general_form($form_state, $type = NULL) {
   }
   $node = uc_termsofservice_get_node($type);
   if ($node) {
-    $view = node_view($node, 'teaser');
+    $display_mode = variable_get('uc_termsofservice_' . $type . '_display', 'teaser');
+    $display_title = variable_get('uc_termsofservice_' . $type . '_title', TRUE);
+
+    if (! $display_title) {
+      unset($node->title);
+    }
+
+    $view = node_view($node, $display_mode);
     $form['tos_text'] = array(
       '#markup' => drupal_render($view),
     );
@@ -261,6 +268,31 @@ function uc_termsofservice_admin_form($type = NULL) {
       '#autocomplete_path' => 'uc_termsofservice/node/autocomplete',
       '#default_value' => variable_get('uc_termsofservice_' . $type . '_node', NULL),
       '#weight' => 0,
+    );
+
+    // Hide node title
+    $form['uc_termsofservice_' . $type . '_title'] = array(
+      '#type' => 'select',
+      '#title' => t('Show the node title?'),
+      '#description' => t('Showing the node title will render it as a link.'),
+      '#options' => array(1 => t('Yes'), 0 => t('No')),
+      '#default_value' => variable_get('uc_termsofservice_' . $type . '_title', 1),
+    );
+
+    // ToS node display mode
+    $entity_info = entity_get_info();
+    $display_types = array();
+
+    foreach ($entity_info['node']['view modes'] as $key => $val) {
+      $display_types[$key] = $val['label'];
+    }
+
+    $form['uc_termsofservice_' . $type . '_display'] = array(
+      '#type' => 'select',
+      '#title' => t('Node display'),
+      '#description' => t('Display type to use to display the node (usually Teaser or Full content).'),
+      '#options' => $display_types,
+      '#default_value' => variable_get('uc_termsofservice_' . $type . '_display', 'teaser'),
     );
 
     // Container for advanced settings.
