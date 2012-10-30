@@ -132,7 +132,7 @@ function uc_termsofservice_general_form($form_state, $type = NULL) {
     $display_title = variable_get('uc_termsofservice_' . $type . '_title', TRUE);
 
     if (! $display_title) {
-      unset($node->title);
+      $node->title = '';
     }
 
     $view = node_view($node, $display_mode);
