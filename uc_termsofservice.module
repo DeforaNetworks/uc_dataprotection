@@ -143,6 +143,7 @@ function uc_termsofservice_general_form($form_state, $type = NULL) {
       '#type' => 'checkboxes',
       '#options' => array('agreed' => t('I agree with the terms above')),
     );
+
     //$form['#theme'] = 'uc_termsofservice_agreement_form';
 
     if (module_exists('modalframe') && variable_get('uc_termsofservice_' . $type . '_popup', 0)) {
@@ -381,7 +382,9 @@ function uc_termsofservice_checkout_form_validate($form, &$form_state) {
       }
       if (!$agreed) {
         $node = uc_termsofservice_get_node('checkout');
-        form_set_error('tos_agree', t("In order to continue with the checkout process, you should accept first the !tos", array('!tos' => $node->title)));
+
+        // Issue #1818992 : the ID used in form_set_error is not a typo
+        form_set_error('panes][uc_termsofservice_agreement_checkout][tos_agree', t("In order to continue with the checkout process, you should accept first the !tos", array('!tos' => $node->title)));
       }
     }
   }
