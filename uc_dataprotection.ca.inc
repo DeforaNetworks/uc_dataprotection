@@ -2,24 +2,24 @@
 
 /**
  * @file
- * Conditional Actions hooks and functions for the terms of service panes.
+ * Conditional Actions hooks and functions for the data protection panes.
  */
 
 /**
  * Implements hook_ca_predicate().
  */
-function uc_termsofservice_ca_predicate() {
+function uc_dataprotection_ca_predicate() {
 
-  $predicates['uc_termsofservice_display_pane'] = array(
+  $predicates['uc_dataprotection_display_pane'] = array(
     '#title' => t('Display pane depending on the product classes'),
-    '#class' => 'uc_termsofservice',
-    '#trigger' => 'uc_termsofservice_display_pane',
+    '#class' => 'uc_dataprotection',
+    '#trigger' => 'uc_dataprotection_display_pane',
     '#status' => 1,
     '#conditions' => array(
       '#operator' => 'AND',
       '#conditions' => array(
         array(
-          '#name' => 'uc_termsofservice_condition_product_class',
+          '#name' => 'uc_dataprotection_condition_product_class',
           '#title' => t('Check if there are products of the selected product classes.'),
           '#argument_map' => array(
             'cart' => 'cart',
@@ -40,9 +40,9 @@ function uc_termsofservice_ca_predicate() {
 /**
  * Implements hook_ca_trigger().
  */
-function uc_termsofservice_ca_trigger() {
+function uc_dataprotection_ca_trigger() {
 
-  $triggers['uc_termsofservice_display_pane'] = array(
+  $triggers['uc_dataprotection_display_pane'] = array(
     '#title' => t('Display checkout or cart panes'),
     '#category' => t('Checkout'),
     '#arguments' => array(
@@ -55,11 +55,11 @@ function uc_termsofservice_ca_trigger() {
 /**
  * Implements hook_ca_condition().
  */
-function uc_termsofservice_ca_condition() {
-  $conditions['uc_termsofservice_condition_product_class'] = array(
+function uc_dataprotection_ca_condition() {
+  $conditions['uc_dataprotection_condition_product_class'] = array(
     '#title' => t('Order has a product of a particular class'),
     '#category' => t('Order: Product'),
-    '#callback' => 'uc_termsofservice_condition_product_class',
+    '#callback' => 'uc_dataprotection_condition_product_class',
     '#arguments' => array(
       'cart' => array('#entity' => 'cart', '#title' => t('Cart')),
     ),
@@ -75,9 +75,9 @@ function uc_termsofservice_ca_condition() {
 /**
  * Checks that an order has a product of the selected class.
  *
- * @see uc_termsofservice_condition_product_class_form()
+ * @see uc_dataprotection_condition_product_class_form()
  */
-function uc_termsofservice_condition_product_class($cart, $settings) {
+function uc_dataprotection_condition_product_class($cart, $settings) {
   foreach ($cart as $cart_item) {
     if ($cart_item->nid) {
       $type = db_result(db_query("SELECT type FROM {node} WHERE nid = %d", $cart_item->nid));
@@ -91,9 +91,9 @@ function uc_termsofservice_condition_product_class($cart, $settings) {
 }
 
 /**
- * @see uc_termsofservice_condition_product_class()
+ * @see uc_dataprotection_condition_product_class()
  */
-function uc_termsofservice_condition_product_class_form($form_state, $settings = array()) {
+function uc_dataprotection_condition_product_class_form($form_state, $settings = array()) {
   $form['class'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Product class'),

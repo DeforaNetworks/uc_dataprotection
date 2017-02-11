@@ -2,26 +2,26 @@
 
 /**
  * @file
- * Install, update, and uninstall functions for the uc_termsofservice module.
+ * Install, update, and uninstall functions for the uc_dataprotection module.
  */
 
 /**
  * Implements hook_uninstall().
  */
-function uc_termsofservice_uninstall() {
+function uc_dataprotection_uninstall() {
   // Remove all module variables from the database.
   db_delete('variable')
-    ->condition('name', db_like('uc_termsofservice_') . '%', 'LIKE')
+    ->condition('name', db_like('uc_dataprotection_') . '%', 'LIKE')
     ->execute();
   cache_clear_all('variables', 'cache_bootstrap');
 }
 
 /**
- * Renames uc_termsofservice_checkout_ca to uc_termsofservice_checkout_rules
+ * Renames uc_dataprotection_checkout_ca to uc_dataprotection_checkout_rules
  * for D7.
  */
-function uc_termsofservice_update_7100() {
-  variable_set('uc_termsofservice_checkout_rules',
-               variable_get('uc_termsofservice_checkout_ca', FALSE));
-  variable_del('uc_termsofservice_checkout_ca');
+function uc_dataprotection_update_7100() {
+  variable_set('uc_dataprotection_checkout_rules',
+               variable_get('uc_dataprotection_checkout_ca', FALSE));
+  variable_del('uc_dataprotection_checkout_ca');
 }

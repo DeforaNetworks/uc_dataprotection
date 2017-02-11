@@ -1,16 +1,16 @@
 /**
  * @file
- * Styles for uc_termsofservice.
+ * Styles for uc_dataprotection.
  */
-#uc-termsofservice-general-form #edit-submit {
+#uc-dataprotection-general-form #edit-submit {
   display: none;
 }
 
-#uc_termsofservice_agreement_checkout-pane {
+#uc_dataprotection_agreement_checkout-pane {
   position: relative;
 }
 
-#uc_termsofservice_agreement_checkout-pane .tos-text {
+#uc_dataprotection_agreement_checkout-pane .dp-text {
   border: 1px solid #D2E6F3;
   display: block;
   height: 200px;

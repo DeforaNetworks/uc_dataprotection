@@ -5,14 +5,14 @@
  * Template file for agreement form.
  */
 
-drupal_add_css(drupal_get_path('module', 'uc_termsofservice') .'/uc_termsofservice.css', 'theme', 'all');
+drupal_add_css(drupal_get_path('module', 'uc_dataprotection') .'/uc_dataprotection.css', 'theme', 'all');
 ?>
 
-<div class="tos-text">
-  <?php print drupal_render($form['tos_text']); ?>
+<div class="dp-text">
+  <?php print drupal_render($form['dp_text']); ?>
 </div>
 
-<div class ="tos-agree">
-  <?php print drupal_render($form['tos_agree']); ?>
+<div class ="dp-agree">
+  <?php print drupal_render($form['dp_agree']); ?>
 </div>
 <?php print drupal_render($form);?>

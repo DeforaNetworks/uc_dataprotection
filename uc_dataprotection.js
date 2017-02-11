@@ -5,17 +5,17 @@
 
 (function ($) {
 
-Drupal.behaviors.uc_termsofservice_modalframe = function() {
-  $('.uc_termsofservice-child:not(.modalframe-tos-processed)').addClass('modalframe-tos-processed').click(function() {
+Drupal.behaviors.uc_dataprotection_modalframe = function() {
+  $('.uc_dataprotection-child:not(.modalframe-dp-processed)').addClass('modalframe-dp-processed').click(function() {
     var element = this;
 
     function onSubmitCallbackToS(args, statusMessages){
-     if (args && args.tos_selected.agreed) {
-       if (args.tos_selected.agreed == 'agreed') {
-        $(".form-checkboxes input[id*='tos-agree-popup-agreed']").attr('checked', true);
+     if (args && args.dp_selected.agreed) {
+       if (args.dp_selected.agreed == 'agreed') {
+        $(".form-checkboxes input[id*='dp-agree-popup-agreed']").attr('checked', true);
        }
        else {
-        $(".form-checkboxes input[id*='tos-agree-popup-agreed']").attr('checked', false);
+        $(".form-checkboxes input[id*='dp-agree-popup-agreed']").attr('checked', false);
        }
      }
     }
@@ -28,7 +28,7 @@ Drupal.behaviors.uc_termsofservice_modalframe = function() {
     };
 
     // Try to obtain the dialog size from the className of the element.
-    var regExp = /^.*uc_termsofservice-size\[\s*([0-9]*\s*,\s*[0-9]*)\s*\].*$/;
+    var regExp = /^.*uc_dataprotection-size\[\s*([0-9]*\s*,\s*[0-9]*)\s*\].*$/;
     if (typeof element.className == 'string' && regExp.test(element.className)) {
       var size = element.className.replace(regExp, '$1').split(',');
       modalOptions.width = parseInt(size[0].replace(/ /g, ''));
