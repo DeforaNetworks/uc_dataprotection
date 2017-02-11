@@ -126,7 +126,7 @@ function uc_dataprotection_general_form($form_state, $type = NULL) {
   if ($type === NULL) {
     $type = arg(2);
   }
-  else
+  else if(is_array($type))
     $type = $type['build_info']['args'][0];
   $node = uc_dataprotection_get_node($type);
   if ($node) {
