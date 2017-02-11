@@ -123,9 +123,11 @@ function uc_dataprotection_agreement_cart_callback($items) {
  */
 function uc_dataprotection_general_form($form_state, $type = NULL) {
   $form = array();
-  if (!$type) {
+  if ($type === NULL) {
     $type = arg(2);
   }
+  else
+    $type = $type['build_info']['args'][0];
   $node = uc_dataprotection_get_node($type);
   if ($node) {
     $display_mode = variable_get('uc_dataprotection_' . $type . '_display', 'teaser');
